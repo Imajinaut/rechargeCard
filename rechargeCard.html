@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Recharge System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .provider-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .provider-box {
+            width: 180px;
+            background-color: #333355;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .provider-option {
+            padding: 5px;
+            margin: 5px 0;
+        }
+        .selected {
+            background-color: #e040fb;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .input-field {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+        .btn-blue {
+            background-color: #4285f4;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .balance-info {
+            margin: 15px 0;
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background-color: #4285f4;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .footer-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            background-color: #333355;
+            color: white;
+            padding: 10px;
+        }
+        .footer-item {
+            padding: 5px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="provider-section">
+            <div style="width: 180px;">
+                <select id="providerDropdown" class="input-field" style="width: 100%; background-color: #333355; color: white;">
+                    <option value="" selected>Choose Provider</option>
+                    <option value="MTN">MTN</option>
+                    <option value="GLO" >GLO</option>
+                    <option value="9MOBILE">9MOBILE</option>
+                    <option value="AIRTEL">AIRTEL</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="cardAmount" class="input-field" />
+                <button class="btn btn-blue"onclick="generatePin()">Generate Pin</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="generatedPin" class="input-field"/>
+            <button class="btn btn-blue" onclick="loadPin()">Load Card</button>
+        </div>
+        
+        <div class="btn-container">
+            <button class="btn btn-blue" onclick="generateTable()">All Vouchers</button>
+            <button class="btn btn-blue">Used Vouchers</button>
+            <button class="btn btn-blue">Unused Vouchers</button>
+        </div>
+        
+        <div class="balance-info" id="balance-info">
+            <!-- Latest Recharge: Your MTN account balance is ₦600.00 -->
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Provider</th>
+                    <th>Amount</th>
+                    <th>Pin</th>
+                    <th>Is Used</th>
+                </tr>
+            </thead>
+            <tbody id="outputTable">
+            </tbody>
+        </table>
+        
+        <div class="footer-nav">
+            <div class="footer-item">GLO</div>
+            <div class="footer-item">AIRTEL</div>
+            <div class="footer-item">9MOBILE</div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    let cardAmount = document.getElementById("cardAmount")
+    let providerDropdown = document.getElementById("providerDropdown")
+    let generatedPin = document.getElementById("generatedPin")
+    let balanceInfo = document.getElementById("balance-info")
+    let initialMTNBalance = 0
+    let initialGLOBalance = 0
+    let initial9MOBILEBalance = 0
+    let initialAIRTELBalance = 0
+    let serialCounter  = 1
+
+    function generatePin(){
+        if (providerDropdown.value ==="") {
+            alert(`Please choose a provider`)
+        } else if( cardAmount.value < 100){
+            alert(`Please an amount greater than 100`)
+        }
+        else {
+            console.log(cardAmount.value)
+            let randomnum= Math.random(cardAmount.value*16)*10**16
+            let finalRandomMnum= Math.floor(randomnum)
+            console.log(finalRandomMnum);
+
+            generatedPin.value = finalRandomMnum
+        }
+
+       
+    }
+
+    function loadPin(){
+        if (generatedPin.value=== '') {
+            alert('Please generate a pin')
+        }else if (providerDropdown.value === "MTN" ) {
+            initialMTNBalance += Number(cardAmount.value);
+            balanceInfo.innerHTML = `<p> Latest Recharge: Your ${providerDropdown.value} account balance is ₦${initialMTNBalance}`
+                console.log(initialMTNBalance);
+        } else if (providerDropdown.value === "GLO"){
+            initialGLOBalance += Number(cardAmount.value);
+            balanceInfo.innerHTML = `<p> Latest Recharge: Your ${providerDropdown.value} account balance is ₦${initialGLOBalance}`
+                console.log(initialGLOBalance);
+        }else if (providerDropdown.value === "9MOBILE"){
+            initial9MOBILEBalance += Number(cardAmount.value);
+            balanceInfo.innerHTML = `<p> Latest Recharge: Your ${providerDropdown.value} account balance is ₦${initial9MOBILEBalance}`
+                console.log(initial9MOBILEBalance);
+        }else if (providerDropdown.value === "AIRTEL"){
+            initialAIRTELBalance += Number(cardAmount.value);
+            balanceInfo.innerHTML = `<p> Latest Recharge: Your ${providerDropdown.value} account balance is ₦${initialAIRTELBalance}`
+                console.log(initialAIRTELBalance);
+        }    
+    }
+
+    function generateTable(){
+        table = []
+        rowData = {
+            serialNumber: serialCounter,
+            provider : providerDropdown.value,
+            amount : cardAmount.value,
+            pin : generatedPin.value,
+            isUsed : false
+        }
+        table.push(rowData)
+        serialCounter++
+        if (generatedPin.value=== '') {
+            alert('Please generate a pin')
+        }
+
+        outputTable.innerHTML += `<tr>
+                    <td>${rowData.serialNumber}</td>
+                    <td>${rowData.provider}</td>
+                    <td>${rowData.amount}</td>
+                    <td>${rowData.pin}</td>
+                    <td>${true}</td>
+         </tr>`
+    }
+</script>
