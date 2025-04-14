@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form action="#" method="POST">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit"  onclick="checkDetails(event)" >Login</button>
+        </form>
+        <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+    </div>
+</body>
+</html>
+<script>
+let userDetails = JSON.parse(localStorage.getItem('customers')) // Get the item as a string
+console.log(userDetails)
+
+
+
+
+function checkDetails(event) {
+    event.preventDefault()
+    let foundEmail =  userDetails.find((user)=>{
+    return user.userEmail === email.value.trim()
+
+})
+
+    let foundPassword = userDetails.find((fpassword)=>{
+        return fpassword.userPassword === password.value.trim()
+    })
+
+if (!foundEmail) {
+        alert('Your email is not correct')
+    } 
+    else if(!foundPassword){
+        alert('Your password is not correct')
+    }
+else {
+        // Proceed with the next actions if the email is found (optional)
+        console.log('Email is correct');
+        let index = userDetails.findIndex((user) => { return user.userEmail === foundEmail.userEmail })
+        localStorage.setItem('loggedInUserIndex', index)
+        console.log(index);
+        window.location.href = 'dashboard.html'
+    }
+}
+</script>

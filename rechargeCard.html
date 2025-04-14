@@ -232,4 +232,8 @@
                     <td>${true}</td>
          </tr>`
     }
+   
+    localStorage.setItem('myNumber', JSON.stringify({num:1, school:`futa`}))
+  console.log(JSON.parse(localStorage.getItem('myNumber')));
+    // localStorage.clear()
 </script>

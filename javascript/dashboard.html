@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+        <div class="main-content" >
+            <div class="profile-header" >
+                <img src="avatar.jpg" alt="Avatar" class="avatar" id="profilepic">
+                <h2>Welcome, <span id="username"></span></h2>
+            </div>
+            <div class="welcome-message" id="welcomeMessage">
+                <p>Here's your dashboard where you can manage everything.</p>
+            </div>
+
+                    <!-- Create a new post form -->
+        <h3>Create New Post</h3>
+        <form id="postForm" >
+            <input type="text" id="postTitle" placeholder="Enter title" >
+            <input type="text" id="postSubtitle" placeholder="Enter subtitle" >
+            <textarea id="postContent" placeholder="Write your post..." ></textarea>
+            <input type="file" id="postImage" accept="image/*" >
+            <button type="submit" onclick="postBlog(event)">Submit Post</button>
+        </form>
+
+        <!-- Display posts -->
+        <div id="postsContainer">
+            <!-- Dynamically added posts will appear here -->
+        </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    let blogs = JSON.parse(localStorage.getItem('listOfBlogs')) || []
+    let userDetails = JSON.parse(localStorage.getItem('customers'))
+    let index = localStorage.getItem('loggedInUserIndex')
+    let currentUser = userDetails[index]
+    let postTitle = document.getElementById('postTitle')
+    let postSubtitle = document.getElementById('postSubtitle')
+    let postContent = document.getElementById('postContent')
+    let postImage = document.getElementById('postImage')
+
+
+    let blogTitle = postTitle.value 
+    let blogSubtitle = postSubtitle.value
+    let blogContent = postContent.value
+    let blogImage = postImage.files
+
+
+if (!index) {
+        alert('Your email is not correct')
+    } 
+    else{
+        username.innerText = currentUser.user
+    }
+
+    function logout() {
+        window.location.href = 'login.html'
+    }
+
+ function postBlog(event) {
+    event.preventDefault()
+    if (postTitle.value  === '') {
+        alert('Please Enter Your Blog Title')
+    } else if (postSubtitle.value === ''){
+        alert('Please Enter Your Blog Subtitle')
+    }else if (postContent.value === ''){
+        alert('Please Enter Your Blog Content')
+    }else if (postImage.files.length === 0){
+        alert('Please Upload a blog image')
+    }else {
+        // Convert the image to base64
+        let fileReader = new FileReader();
+        fileReader.readAsDataURL(postImage.files[0]); // Read the file as a base64 string
+
+        fileReader.onload = function () {
+            // When the file is read, create the blog object
+            let blogObj = {
+                blogTitle: postTitle.value,
+                blogSubtitle: postSubtitle.value,
+                blogContent: postContent.value,
+                blogImage: fileReader.result  // Base64 string for the image
+            };
+
+            // Push the new blog to the blogs array
+            blogs.push(blogObj);
+            console.log(blogs);
+
+            // Store updated blogs array in localStorage
+            localStorage.setItem('listOfBlogs', JSON.stringify(blogs));
+
+            // Reset form fields
+            postTitle.value = '';
+            postSubtitle.value = '';
+            postContent.value = '';
+            postImage.value = '';  // Clear the image input
+
+            // Call function to render posts
+            displayPosts();
+        };
+    }
+}
+
+function displayPosts() {
+    postsContainer.innerHTML = ''; // Clear previous posts
+
+    // Loop through the blogs array and render each post
+    blogs.forEach(blog => {
+        postsContainer.innerHTML += `
+            <div class="post">
+                <img src="${blog.blogImage}" alt="Post Image" width="300">
+                <h1>${blog.blogTitle}</h1>
+                <h3>${blog.blogSubtitle}</h3>
+                <p>${blog.blogContent}</p>
+
+                <!-- Like, Dislike, and Comment Section -->
+                <div class="interaction-buttons">
+                    <button class="like-btn">Like</button>
+                    <button class="dislike-btn">Dislike</button>
+                </div>
+
+                <div class="comment-section">
+                    <input type="text" placeholder="Leave a comment">
+                    <button class="comment-btn">Post Comment</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// Initial call to display any saved posts when the page loads
+displayPosts();
+</script>
